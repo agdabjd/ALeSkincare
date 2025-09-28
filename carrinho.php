@@ -12,11 +12,12 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Carrinho - Ale Skincare</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <nav class="navbar navbar-light bg-white shadow-sm">
   <div class="container">
+    <img src="assets/ALe-logo.png" alt="ALe" style="width:80px;">
     <a class="navbar-brand text-pink" href="#">Ale Skincare</a>
     <div>
       Olá, <?=htmlspecialchars($userName)?> &nbsp; <a href="php/logout.php">Sair</a>
@@ -25,7 +26,13 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
 </nav>
 
 <div class="container mt-4">
-  <h3>Carrinho de Compras</h3>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a class="nav-link" href="produtos.php">Produtos</a></li>
+      <li class="nav-item"><a class="nav-link" href="fornecedores.php">Fornecedores</a></li>
+      <li class="nav-item"><a class="nav-link active" href="carrinho.php">Carrinho</a></li>
+    </ul>
+  </div>
   <div class="row">
     <div class="col-md-8">
       <div id="cartItems" class="card p-3">
@@ -40,6 +47,6 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
   </div>
 </div>
 
-<script src="assets/js/main.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
