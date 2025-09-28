@@ -1,0 +1,22 @@
+/* assets/css/style.css */
+:root {
+  --pink: #ff2e8d;
+  --light-pink: #ffdbea;
+  --bg: linear-gradient(180deg,#ffeef6,#ffdbe7);
+}
+
+body { font-family: "Inter", Arial, sans-serif; background: var(--bg); }
+
+.page-bg { min-height:100vh; display:flex; align-items:center; justify-content:center; }
+
+.login-center { padding: 30px; }
+
+.text-pink { color: var(--pink); }
+.btn-pink { background: var(--pink); color: #fff; border: none; }
+.btn-pink:hover { background: #e12679; }
+.btn-outline-pink { border-color: var(--pink); color: var(--pink); background: #fff; }
+.active-tab { background: var(--pink); color: #fff; }
+
+.form-control, .card { border-radius: 10px; }
+
+.navbar .text-pink { font-weight:600; color: var(--pink); }
