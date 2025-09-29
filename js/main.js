@@ -199,8 +199,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       const summaryCont = document.getElementById('cartSummary');
       if (itemsCont) {
         if (!data.items.length) {
-          itemsCont.innerHTML = '<div class="text-center p-4">Seu carrinho está vazio</div>';
+          // carrinho vazio → ocupa largura total
+          itemsCont.className = "col-12";
+
+          itemsCont.innerHTML = `
+            <div class="card p-5 text-center shadow-sm w-100" style="background-color:#ffffff; border-radius: 1rem;">
+              <img src="assets/cart-empty.png" alt="Carrinho vazio" style="width:80px; margin:auto;">
+              <h4 class="cart-empty-title mt-3 text-pink">Seu carrinho está vazio</h4>
+              <p class="cart-empty-subtitle text-pink">
+                Adicione produtos da tela de produtos para começar suas compras.
+              </p>
+              <div class="cart-extra-info text-muted mt-2">
+                ✨ Frete grátis acima de R$ 99 &nbsp; • &nbsp; 🔒 Compra 100% segura
+              </div>
+            </div>
+          `;
+
+          // limpar o resumo
+          const summaryCont = document.getElementById('cartSummary');
+          if (summaryCont) summaryCont.innerHTML = "";
         } else {
+          // carrinho cheio → volta para layout lado a lado
+          itemsCont.className = "col-md-8";
+
           let html = '<table class="table"><thead><tr><th>Produto</th><th>Preço</th><th>Ações</th></tr></thead><tbody>';
           data.items.forEach(it => {
             html += `<tr>
@@ -227,7 +248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           });
         }
       }
-      if (summaryCont) {
+      if (data.items.length) {
         summaryCont.innerHTML = `<h5>Resumo do Pedido</h5>
           <p>Total de itens: ${data.count}</p>
           <p><strong>Total: R$ ${Number(data.total).toFixed(2)}</strong></p>
