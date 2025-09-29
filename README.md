@@ -33,3 +33,5 @@ Quando vazio:
 ![Tela de carrinho vazio](telasFigma/carrinho-vazio.png)
 Quando possui produtos:
 ![Tela de carrinho cheio](telasFigma/carrinho-cheio.png)
+
+<3
