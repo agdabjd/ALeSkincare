@@ -22,18 +22,27 @@ async function loadProducts(filter = '') {
         <div class="position-relative">
           <input type="checkbox" class="select-product" data-id="${p.id}" style="position:absolute; right:12px; top:12px;">
           <div style="height:140px; background:#ffeef6; border-radius:8px; display:flex; align-items:center; justify-content:center;">
-            <i class="bi bi-cart" style="font-size:48px; color:#ffcfe6;"></i>
+            <img src="assets/cart-product.png">
           </div>
         </div>
-        <h5 class="mt-3">${escapeHtml(p.name)}</h5>
-        <div class="text-success fw-bold">R$ ${Number(p.price).toFixed(2)}</div>
+        <h5 class="mt-3" style="color: #d60464;">${escapeHtml(p.name)}</h5>
+        <h4 class="text-success fw-bold">R$ ${Number(p.price).toFixed(2)}</h4>
         <p class="small text-muted">${escapeHtml(p.description || '')}</p>
-        <div class="mt-auto d-flex justify-content-between align-items-center">
-          <div>
-            <small>Fornecedor: <strong>${escapeHtml(p.supplier_name || '—')}</strong></small>
+        <div class="mt-auto">
+          <div class="text-pink mb-2">
+            <small><strong>Fornecedor: </strong>${escapeHtml(p.supplier_name || '—')}</small>
           </div>
-          <div>
-            ${inStock ? `<button class="btn btn-pink btn-sm btn-add" data-id="${p.id}">Adicionar</button>` : `<button class="btn btn-secondary btn-sm" disabled>Indisponível</button>`}
+          <div class="d-flex gap-2">
+            ${inStock 
+              ? `<button class="btn btn-pink flex-grow-1 btn-add" data-id="${p.id}">
+                   <img src="assets/cart-white-small.png"> Adicionar
+                 </button>` 
+              : `<button class="btn flex-grow-1 btn-outline-light" style=" background-color:#C4C4C7;" disabled>
+                    <img src="assets/cart-white-small.png"> Indisponível
+                 </button>`}
+            <button class="btn btn-outline-pink btn-edit" data-id="${p.id}">
+              <img src="assets/edit.png">
+            </button>
           </div>
         </div>
       </div>
@@ -58,6 +67,57 @@ async function loadProducts(filter = '') {
       updateSelectedButton();
     });
   });
+
+document.querySelectorAll('.btn-edit').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    const id = e.currentTarget.getAttribute('data-id');
+    const product = await fetchJSON(`php/api_products.php?action=get&id=${id}`);
+
+    if (product) {
+      // abre o formulário
+      document.getElementById('productForm').style.display = '';
+
+      // Troca o texto do botão
+      document.querySelector("#frmNewProduct button[type='submit']").textContent = "Salvar Alterações";
+
+      // preenche os campos
+      document.getElementById('productId').value = product.id ?? '';
+      document.getElementById('productName').value = product.name ?? '';
+      document.getElementById('productPrice').value = product.price ?? '';
+      document.getElementById('productDescription').value = product.description ?? '';
+
+      // garante que o fornecedor existe no select
+      const sel = document.getElementById('selectSupplier');
+      if (product.supplier_id) {
+        let opt = [...sel.options].find(o => o.value == product.supplier_id);
+        if (!opt) {
+          opt = document.createElement('option');
+          opt.value = product.supplier_id;
+          opt.textContent = product.supplier_name || `Fornecedor #${product.supplier_id}`;
+          sel.appendChild(opt);
+        }
+        sel.value = product.supplier_id;
+      } else {
+        sel.value = '';
+      }
+
+      document.getElementById('inStock').checked = (parseInt(product.in_stock) === 1);
+
+      // marca que o formulário agora é "update"
+      document.getElementById('frmNewProduct').setAttribute('data-action', 'update');
+
+      document.getElementById("btnCancelProduct").addEventListener("click", function() {
+        document.getElementById("frmNewProduct").reset();
+        document.getElementById("productId").value = "";
+        document.getElementById("productTitle").textContent = "Cadastrar Novo Produto";
+        document.querySelector("#frmNewProduct button[type='submit']").textContent = "Cadastrar Produto";
+        document.getElementById("productForm").style.display = "none";
+      });
+
+    }
+  });
+});
+
 
   // checkbox listeners
   document.querySelectorAll('.select-product').forEach(cb => {
@@ -104,18 +164,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       const fd = new FormData(ev.target);
       const obj = Object.fromEntries(fd.entries());
       obj.in_stock = (fd.get('in_stock') ? 1 : 0);
-      const res = await fetchJSON('php/api_products.php?action=create', {
+
+      const action = ev.target.getAttribute('data-action') === 'update' ? 'update' : 'create';
+      const res = await fetchJSON(`php/api_products.php?action=${action}`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(obj)
       });
+
       if (res.ok) {
-        alert('Produto cadastrado');
+        alert(action === 'create' ? 'Produto cadastrado' : 'Produto atualizado');
         ev.target.reset();
         document.getElementById('productForm').style.display = 'none';
+        ev.target.removeAttribute('data-action'); // volta para create
         loadProducts();
       } else {
-        alert('Erro ao cadastrar produto');
+        alert('Erro ao salvar produto');
       }
     });
 
@@ -161,7 +225,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const sup = await fetchJSON('php/api_suppliers.php?action=list');
       const container = document.getElementById('suppliersTable');
       if (!container) return;
-      let html = '<table class="table"><thead><tr><th>Nome</th><th>Contato</th><th>Endereço</th></tr></thead><tbody>';
+      let html = '<table class="table"><thead class="text-pink"><tr><th>Nome</th><th>Contato</th><th>Endereço</th></tr></thead><tbody>';
       sup.forEach(s => {
         html += `<tr><td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.contact || '')}</td><td>${escapeHtml(s.address || '')}</td></tr>`;
       });

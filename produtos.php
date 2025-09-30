@@ -42,7 +42,13 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
       .custom-nav .nav-link:hover:not(.active) {
         background-color: #f8d7e6;
       }
-  </style>
+
+      .form-control { background-color: #f2f2f2; }  
+
+      .text-small { font-size: small; }
+
+      .text-small-bold { font-size: small; font-weight:bold; }
+    </style>
   </head>
   <body>
     <nav class="navbar navbar-light bg-white shadow-sm">
@@ -64,7 +70,7 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
 
     <div class="container mt-4">
       <div class="d-flex justify-content-center">
-        <ul class="nav nav-pills custom-nav shadow-sm nav-fill w-100">
+        <ul class="nav nav-pills custom-nav shadow nav-fill w-100">
           <li class="nav-item">
             <a class="nav-link active" href="produtos.php">
               <img src="assets/package-white.png">
@@ -110,40 +116,47 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
 
       <!-- Formulário de novo produto (escondido inicialmente) -->
       <div id="productForm" class="card mb-4 p-3" style="display:none;">
-        <h5>Cadastrar Novo Produto</h5>
+        <p id="productTitle" style="color: #d60464;">Cadastrar Produto</p>
         <form id="frmNewProduct">
+          <input type="hidden" id="productId" name="id">
           <div class="row">
             <div class="col-md-8 mb-2">
-              <input class="form-control" name="name" placeholder="Nome do Produto" required>
+              <label class="text-small-bold">Nome do Produto</label>
+              <input class="form-control" name="name" id="productName" required>
             </div>
             <div class="col-md-4 mb-2">
-              <input class="form-control" name="price" placeholder="Preço (R$)" required pattern="^[0-9]+(\.[0-9]{2})?$" >
+              <label class="text-small-bold">Preço (R$)</label>
+              <input class="form-control" name="price" id="productPrice" required pattern="^[0-9]+(\.[0-9]{2})?$" >
             </div>
             <div class="col-md-6 mb-2">
-              <select class="form-control" name="supplier_id" id="selectSupplier">
+              <label class="text-small-bold">Fornecedor</label>
+              <select class="form-control text-small" name="supplier_id" id="selectSupplier">
                 <option value="">Selecione um fornecedor</option>
               </select>
             </div>
             <div class="col-md-6 mb-2 d-flex align-items-center">
               <div class="form-check ms-2">
                 <input class="form-check-input" type="checkbox" name="in_stock" id="in_stock" checked>
-                <label class="form-check-label">Produto em estoque</label>
+                <label class="form-check-label text-small-bold">Produto em estoque</label>
               </div>
             </div>
             <div class="col-12 mb-2">
-              <textarea class="form-control" name="description" placeholder="Descrição"></textarea>
+              <label class="text-small-bold">Descrição</label>
+              <textarea class="form-control" name="description" id="productDescription"></textarea>
             </div>
           </div>
           <div class="mt-2">
             <button class="btn btn-pink" type="submit">Cadastrar Produto</button>
-            <button id="btnCancelProduct" type="button" class="btn btn-outline-secondary">Cancelar</button>
+            <button id="btnCancelProduct" type="button" class="btn btn-outline-pink text-pink">
+              <img src="assets/close-pink.png"> Cancelar
+            </button>
           </div>
         </form>
       </div>
 
       <!-- Filtros (simples) -->
       <div class="mb-3">
-        <input id="searchBox" class="form-control mb-2" placeholder="Buscar produtos...">
+        <input id="searchBox" class="form-control mb-2" placeholder="Buscar produtos..." style="outline: 1px solid #ff2e8d;">
       </div>
 
       <!-- Grid de produtos -->

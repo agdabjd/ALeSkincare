@@ -22,21 +22,71 @@ if ($action === 'create') {
         $input = json_decode(file_get_contents('php://input'), true);
         $data = $input ?: [];
     }
+
+    $id          = $data['id'] ?? null;
+    $name        = $data['name'] ?? null;
+    $price       = $data['price'] ?? 0;
+    $supplier_id = $data['supplier_id'] ?: null;
+    $description = $data['description'] ?? '';
+    $in_stock    = isset($data['in_stock']) ? (int)$data['in_stock'] : 1;
+
+    if (!$name) {
+        echo json_encode(['ok' => false, 'error' => 'Nome obrigatório']);
+        exit;
+    }
+
+    if ($id) {
+        // UPDATE
+        $stmt = $pdo->prepare("UPDATE products 
+                               SET name = ?, price = ?, supplier_id = ?, description = ?, in_stock = ?
+                               WHERE id = ?");
+        $ok = $stmt->execute([$name, $price, $supplier_id, $description, $in_stock, $id]);
+    } else {
+        // INSERT
+        $stmt = $pdo->prepare("INSERT INTO products (name, price, supplier_id, description, in_stock) 
+                               VALUES (?, ?, ?, ?, ?)");
+        $ok = $stmt->execute([$name, $price, $supplier_id, $description, $in_stock]);
+    }
+
+    echo json_encode(['ok' => (bool)$ok]);
+    exit;
+}
+
+if ($action === 'get') {
+    $id = intval($_GET['id'] ?? 0);
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
+    $stmt->execute([$id]);
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo json_encode($product ?: null);
+    exit;
+}
+
+if ($action === 'update') {
+    $data = $_POST;
+    if (empty($data)) {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $data = $input ?: [];
+    }
+
+    $id = $data['id'] ?? null;
     $name = $data['name'] ?? null;
     $price = $data['price'] ?? 0;
     $supplier_id = $data['supplier_id'] ?: null;
     $description = $data['description'] ?? '';
     $in_stock = isset($data['in_stock']) ? (int)$data['in_stock'] : 1;
 
-    if (!$name) {
-        echo json_encode(['ok' => false, 'error' => 'Nome obrigatório']);
+    if (!$id || !$name) {
+        echo json_encode(['ok' => false, 'error' => 'Dados inválidos']);
         exit;
     }
-    $stmt = $pdo->prepare("INSERT INTO products (name, price, supplier_id, description, in_stock) VALUES (?, ?, ?, ?, ?)");
-    $ok = $stmt->execute([$name, $price, $supplier_id, $description, $in_stock]);
+
+    $stmt = $pdo->prepare("UPDATE products SET name=?, price=?, supplier_id=?, description=?, in_stock=? WHERE id=?");
+    $ok = $stmt->execute([$name, $price, $supplier_id, $description, $in_stock, $id]);
+
     echo json_encode(['ok' => (bool)$ok]);
     exit;
 }
+
 
 if ($action === 'delete') {
     $id = intval($_GET['id'] ?? 0);

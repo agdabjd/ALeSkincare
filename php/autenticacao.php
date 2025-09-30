@@ -6,21 +6,26 @@ $pdo = require __DIR__ . '/conexao.php';
 $email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 
+// erro: falta de email ou senha
 if (!$email || !$password) {
-    die('Preencha e-mail e senha.');
+    header('Location: ../index.php?erro=email');
+    exit;
 }
 
 $stmt = $pdo->prepare("SELECT id, name, password_hash FROM users WHERE email = ?");
 $stmt->execute([$email]);
 $user = $stmt->fetch();
 
+// erro: usuário não encontrado
 if (!$user) {
-    die('Usuário não encontrado.');
+    header('Location: ../index.php?erro=user');
+    exit;
 }
 
 // Espera o formato salt:hash
 if (!strpos($user['password_hash'], ':')) {
-    die('Formato de hash de senha inválido no registro do usuário.');
+    header('Location: ../index.php?erro=hash');
+    exit;
 }
 list($salt, $hash) = explode(':', $user['password_hash']);
 $calc = hash('sha256', $salt . $password);

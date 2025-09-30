@@ -62,7 +62,7 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
 
     <div class="container mt-4">
       <div class="d-flex justify-content-center">
-        <ul class="nav nav-pills custom-nav shadow-sm nav-fill w-100">
+        <ul class="nav nav-pills custom-nav shadow nav-fill w-100">
           <li class="nav-item">
             <a class="nav-link" href="produtos.php">
               <img src="assets/package-pink.png">
@@ -96,9 +96,13 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
         </div>
       </div>
 
+      <!-- Área dinâmica do carrinho -->
       <div class="row mt-3">
-        <div id="cartItems" class="col-12"></div>
-        <div id="cartSummary" class="col-12 col-md-4"></div>
+        <!-- Itens do carrinho -->
+        <div id="cartItems" class="col-md-8"></div>
+
+        <!-- Resumo -->
+        <div id="cartSummary" class="col-md-4"></div>
       </div>
 
     </div>
