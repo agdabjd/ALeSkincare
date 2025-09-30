@@ -1,5 +1,4 @@
 <?php
-// php/autenticacao.php
 session_start();
 $pdo = require __DIR__ . '/conexao.php';
 

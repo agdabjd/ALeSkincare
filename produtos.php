@@ -1,5 +1,4 @@
 <?php
-// produtos.php
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
@@ -114,7 +113,7 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
         </div>
       </div>
 
-      <!-- Formulário de novo produto (escondido inicialmente) -->
+      <!-- Formulário de novo produto -->
       <div id="productForm" class="card mb-4 p-3" style="display:none;">
         <p id="productTitle" style="color: #d60464;">Cadastrar Produto</p>
         <form id="frmNewProduct">
@@ -154,7 +153,7 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
         </form>
       </div>
 
-      <!-- Filtros (simples) -->
+      <!-- Filtros -->
       <div class="mb-3">
         <input id="searchBox" class="form-control mb-2" placeholder="Buscar produtos..." style="outline: 1px solid #ff2e8d;">
       </div>

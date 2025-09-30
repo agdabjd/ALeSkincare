@@ -1,5 +1,4 @@
 <?php
-// php/api_basket.php
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 
@@ -15,7 +14,6 @@ $pdo->exec("USE `aleskincare`");
 $user_id = $_SESSION['user_id'];
 $action = $_REQUEST['action'] ?? 'get';
 
-// Função auxiliar: pega ou cria cesta 'open'
 function get_or_create_open_basket($pdo, $user_id) {
     $stmt = $pdo->prepare("SELECT id FROM baskets WHERE user_id = ? AND status = 'open' LIMIT 1");
     $stmt->execute([$user_id]);
@@ -42,14 +40,12 @@ if ($action === 'add') {
     $basket_id = get_or_create_open_basket($pdo, $user_id);
     $added = 0;
     foreach ($product_ids as $pid) {
-        // checa se o produto existe e está em estoque (opcional: permitir adicionar indisponíveis?)
         $stmt = $pdo->prepare("SELECT in_stock FROM products WHERE id = ?");
         $stmt->execute([$pid]);
         $p = $stmt->fetch();
         if (!$p) continue;
-        if ((int)$p['in_stock'] === 0) continue; // não adiciona indisponível
+        if ((int)$p['in_stock'] === 0) continue;
 
-        // verifica duplicata
         $stmt = $pdo->prepare("SELECT id FROM basket_items WHERE basket_id = ? AND product_id = ?");
         $stmt->execute([$basket_id, $pid]);
         if ($stmt->fetch()) continue;
@@ -59,7 +55,6 @@ if ($action === 'add') {
         $added++;
     }
 
-    // Conta itens
     $stmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM basket_items WHERE basket_id = ?");
     $stmt->execute([$basket_id]);
     $count = $stmt->fetch()['cnt'];
@@ -69,7 +64,6 @@ if ($action === 'add') {
 }
 
 if ($action === 'get') {
-    // pega cesta open do usuário
     $stmt = $pdo->prepare("SELECT id FROM baskets WHERE user_id = ? AND status = 'open' LIMIT 1");
     $stmt->execute([$user_id]);
     $b = $stmt->fetch();
@@ -112,6 +106,33 @@ if ($action === 'remove') {
     $ok = $del->execute([$basket_id, $product_id]);
     echo json_encode(['ok' => (bool)$ok]);
     exit;
+}
+
+if ($action === 'clear') {
+    $stmt = $pdo->prepare("SELECT id FROM baskets WHERE user_id = ? AND status = 'open' LIMIT 1");
+    $stmt->execute([$user_id]);
+    $b = $stmt->fetch();
+
+    if (!$b) {
+        echo json_encode(['ok' => true, 'message' => 'Nenhuma cesta aberta para finalizar']);
+        exit;
+    }
+
+    $basket_id = $b['id'];
+
+    try {
+        $pdo->beginTransaction();
+        $del_items = $pdo->prepare("DELETE FROM basket_items WHERE basket_id = ?");
+        $del_items->execute([$basket_id]);
+        $pdo->commit();
+        echo json_encode(['ok' => true, 'message' => 'Compra finalizada e cesta fechada.']);
+        exit;
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        http_response_code(500);
+        echo json_encode(['ok' => false, 'error' => 'Erro ao finalizar a compra.']);
+        exit;
+    }
 }
 
 http_response_code(400);

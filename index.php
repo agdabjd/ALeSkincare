@@ -1,5 +1,4 @@
 <?php
-// index.php - login / cadastro
 session_start();
 if (isset($_SESSION['user_id'])) {
     header('Location: produtos.php');
@@ -34,23 +33,44 @@ if (isset($_SESSION['user_id'])) {
 
     // erro: falta de email ou senha
     if (isset($_GET['erro']) && $_GET['erro'] == 'email') {
-        echo '<script>
-                alert("Preencha e-mail e senha.");
-              </script>';
+      echo '<script>
+        alert("Preencha e-mail e senha.");
+      </script>';
     }
 
     // erro: usuário não encontrado
     if (isset($_GET['erro']) && $_GET['erro'] == 'user') {
-        echo '<script>
-                alert("Usuário não encontrado.");
-              </script>';
+      echo '<script>
+        alert("Usuário não encontrado.");
+      </script>';
     }
 
     // Espera o formato salt:hash
     if (isset($_GET['erro']) && $_GET['erro'] == 'hash') {
-        echo '<script>
-                alert("Formato de hash de senha inválido no registro do usuário.");
-              </script>';
+      echo '<script>
+        alert("Formato de hash de senha inválido no registro do usuário.");
+      </script>';
+    }
+
+    // campos não preenchidos
+    if (isset($_GET['erro']) && $_GET['erro'] == 'preencha') {
+      echo '<script>
+        alert("Preencha todos os campos.");
+      </script>';
+    }
+
+    // as senhas não conferem
+    if (isset($_GET['erro']) && $_GET['erro'] == 'confirm') {
+      echo '<script>
+        alert("As senhas não conferem.");
+      </script>';
+    }
+
+    // email já cadastrado
+    if (isset($_GET['erro']) && $_GET['erro'] == 'emailExists') {
+      echo '<script>
+        alert("E-mail já cadastrado.");
+      </script>';
     }
 
   ?>

@@ -46,7 +46,7 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
     <nav class="navbar navbar-light bg-white shadow-sm">
       <div class="container d-flex justify-content-between align-items-center">
         
-        <!-- Agrupando logo + nome -->
+        <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="#" style="color: #d60464; font-weight: bold;">
           <img src="assets/ALe-logo.png" alt="ALe" style="width:50px;" class="me-2">
           Ale Skincare
@@ -96,7 +96,7 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
         </div>
       </div>
 
-      <!-- Área dinâmica do carrinho -->
+      <!-- Itens do carrinho -->
       <div class="row mt-3">
         <!-- Itens do carrinho -->
         <div id="cartItems" class="col-md-8"></div>

@@ -34,4 +34,6 @@ Quando vazio:
 Quando possui produtos:
 ![Tela de carrinho cheio](telasFigma/carrinho-cheio.png)
 
-<3
+## Diagrama Entidade Relacionamento
+Mostra o Relacionamento entre as tabelas do banco de dados.
+![Diagrama de entidade relacionamento](telasFigma/DER.png)

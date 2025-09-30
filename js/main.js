@@ -1,6 +1,3 @@
-// js/main.js
-
-// Helpers
 async function fetchJSON(url, opts = {}) {
   const res = await fetch(url, opts);
   return res.json();
@@ -50,7 +47,6 @@ async function loadProducts(filter = '') {
     grid.appendChild(col);
   });
 
-  // adiciona listeners
   document.querySelectorAll('.btn-add').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const id = e.currentTarget.getAttribute('data-id');
@@ -74,19 +70,13 @@ document.querySelectorAll('.btn-edit').forEach(btn => {
     const product = await fetchJSON(`php/api_products.php?action=get&id=${id}`);
 
     if (product) {
-      // abre o formulário
       document.getElementById('productForm').style.display = '';
-
-      // Troca o texto do botão
       document.querySelector("#frmNewProduct button[type='submit']").textContent = "Salvar Alterações";
-
-      // preenche os campos
       document.getElementById('productId').value = product.id ?? '';
       document.getElementById('productName').value = product.name ?? '';
       document.getElementById('productPrice').value = product.price ?? '';
       document.getElementById('productDescription').value = product.description ?? '';
 
-      // garante que o fornecedor existe no select
       const sel = document.getElementById('selectSupplier');
       if (product.supplier_id) {
         let opt = [...sel.options].find(o => o.value == product.supplier_id);
@@ -102,8 +92,6 @@ document.querySelectorAll('.btn-edit').forEach(btn => {
       }
 
       document.getElementById('inStock').checked = (parseInt(product.in_stock) === 1);
-
-      // marca que o formulário agora é "update"
       document.getElementById('frmNewProduct').setAttribute('data-action', 'update');
 
       document.getElementById("btnCancelProduct").addEventListener("click", function() {
@@ -118,8 +106,6 @@ document.querySelectorAll('.btn-edit').forEach(btn => {
   });
 });
 
-
-  // checkbox listeners
   document.querySelectorAll('.select-product').forEach(cb => {
     cb.addEventListener('change', updateSelectedButton);
   });
@@ -158,7 +144,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       sel.appendChild(opt);
     });
 
-    // submit novo produto via AJAX
     document.getElementById('frmNewProduct').addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const fd = new FormData(ev.target);
@@ -176,19 +161,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert(action === 'create' ? 'Produto cadastrado' : 'Produto atualizado');
         ev.target.reset();
         document.getElementById('productForm').style.display = 'none';
-        ev.target.removeAttribute('data-action'); // volta para create
+        ev.target.removeAttribute('data-action');
         loadProducts();
       } else {
         alert('Erro ao salvar produto');
       }
     });
 
-    // busca
     document.getElementById('searchBox').addEventListener('input', (e) => {
       loadProducts(e.target.value);
     });
 
-    // adicionar selecionados
     document.getElementById('btnAddSelected').addEventListener('click', async () => {
       const checked = [...document.querySelectorAll('.select-product:checked')].map(el => el.getAttribute('data-id'));
       if (!checked.length) return alert('Selecione ao menos um produto.');
@@ -207,7 +190,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
 
-    // carregamento inicial
     loadProducts();
   }
 
@@ -220,14 +202,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('supplierForm').style.display = 'none';
     });
 
-    // carrega lista
     async function loadSuppliers() {
       const sup = await fetchJSON('php/api_suppliers.php?action=list');
       const container = document.getElementById('suppliersTable');
       if (!container) return;
-      let html = '<table class="table"><thead class="text-pink"><tr><th>Nome</th><th>Contato</th><th>Endereço</th></tr></thead><tbody>';
+      let html = '<table class="table"><thead><tr><th><p style="color: #d60464; font-weight: bold;">Nome</p></th><th><p style="color: #d60464; font-weight: bold;">Contato</p></th><th><p style="color: #d60464; font-weight: bold;">Endereço</p></th></tr></thead><tbody>';
       sup.forEach(s => {
-        html += `<tr><td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.contact || '')}</td><td>${escapeHtml(s.address || '')}</td></tr>`;
+        html += `<tr><td style="color: #d60464; font-weight: bold;">${escapeHtml(s.name)}</td><td class="text-muted"><img src="assets/contact-pink.png">${escapeHtml(s.contact || '')}</td><td class="text-muted"><img src="assets/location-pink.png">${escapeHtml(s.address || '')}</td></tr>`;
       });
       html += '</tbody></table>';
       container.innerHTML = html;
@@ -263,9 +244,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const summaryCont = document.getElementById('cartSummary');
       if (itemsCont) {
         if (!data.items.length) {
-          // carrinho vazio → ocupa largura total
           itemsCont.className = "col-12";
-
           itemsCont.innerHTML = `
             <div class="card p-5 text-center shadow-sm w-100" style="background-color:#ffffff; border-radius: 1rem;">
               <img src="assets/cart-empty.png" alt="Carrinho vazio" style="width:80px; margin:auto;">
@@ -279,25 +258,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           `;
 
-          // limpar o resumo
           const summaryCont = document.getElementById('cartSummary');
           if (summaryCont) summaryCont.innerHTML = "";
         } else {
-          // carrinho cheio → volta para layout lado a lado
           itemsCont.className = "col-md-8";
-
-          let html = '<table class="table"><thead><tr><th>Produto</th><th>Preço</th><th>Ações</th></tr></thead><tbody>';
+          let html = '<table class="table shadow-sm" style="outline: 1px solid #FDBBD5; border-radius: 5px;"><thead><tr><th><p style="color: #d60464; font-weight: bold;">Produto</p></th><th><p style="color: #d60464; font-weight: bold;">Preço</p></th><th><p style="color: #d60464; font-weight: bold;">Ações</p></th></tr></thead><tbody>';
           data.items.forEach(it => {
             html += `<tr>
-              <td><strong>${escapeHtml(it.name)}</strong><br><small>${escapeHtml(it.supplier_name||'')}</small></td>
-              <td>R$ ${Number(it.price).toFixed(2)}</td>
-              <td><button class="btn btn-outline-danger btn-sm" data-remove="${it.product_id}">Remover</button></td>
+              <td><strong style="color: #d60464;">${escapeHtml(it.name)}</strong><br><small>${escapeHtml(it.supplier_name||'')}</small></td>
+              <td><strong>R$ ${Number(it.price).toFixed(2)}</strong></td>
+              <td><button class="btn btn-outline-pink btn-sm" data-remove="${it.product_id}"><img src="assets/delete-red.png"></button></td>
             </tr>`;
           });
           html += '</tbody></table>';
           itemsCont.innerHTML = html;
 
-          // listeners remover
           itemsCont.querySelectorAll('[data-remove]').forEach(btn => {
             btn.addEventListener('click', async (e) => {
               const pid = e.currentTarget.getAttribute('data-remove');
@@ -313,10 +288,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
       if (data.items.length) {
-        summaryCont.innerHTML = `<h5>Resumo do Pedido</h5>
-          <p>Total de itens: ${data.count}</p>
-          <p><strong>Total: R$ ${Number(data.total).toFixed(2)}</strong></p>
-          <button class="btn btn-pink w-100">Finalizar Compra</button>`;
+        summaryCont.innerHTML = `
+          <div style="background-color: #ffffff; border: 1px solid #f5c0d4; border-radius: 5px; padding: 15px;" class="shadow-sm">
+            <h5 style="color: #c2185b;">Resumo do Pedido</h5>
+            <p style="color: #6c757d; margin-bottom: 5px;">Total de itens: <strong style="color: #000;">${data.count}</strong></p> 
+            <p style="color: #c2185b; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px;">Total: R$ ${Number(data.total).toFixed(2)}</p>
+            <button class="btn btn-pink w-100" style="margin-bottom: 10px;" id="finalizePurchaseBtn">
+              <img src="assets/card-white.png">
+              Finalizar Compra
+            </button>
+            <small style="color: #6c757d; display: block; text-align: center;">
+              Pagamento seguro e entrega garantida<br>
+              ✓ SSL Certificado &nbsp; ✓ Compra Protegida
+            </small>
+          </div>
+          `;
+
+          const finalizeBtn = document.getElementById('finalizePurchaseBtn');
+          if (finalizeBtn) {
+            finalizeBtn.addEventListener('click', async () => {
+              // 1. Chamar a API para limpar o carrinho (nova action: clear)
+              const res = await fetchJSON('php/api_basket.php?action=clear', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'}
+              });
+              
+              if (res.ok) {
+                alert('🎉 Compra finalizada com sucesso! Seu carrinho foi esvaziado.');
+                loadCart(); 
+              } else {
+                alert('⚠️ Erro ao finalizar a compra. Tente novamente.');
+              }
+            });
+          }          
       }
     }
     loadCart();

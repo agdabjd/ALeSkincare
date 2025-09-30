@@ -41,7 +41,6 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
         background-color: #f8d7e6;
       }
 
-      /* Seção título + botão */
       .page-header {
         display: flex;
         align-items: center;
@@ -66,14 +65,22 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
         overflow: hidden;
       }
 
+      .text-muted {
+        font-size: small;
+      }
 
+      .form-control { background-color: #f2f2f2; } 
+
+      .text-small { font-size: small; }
+
+      .text-small-bold { font-size: small; font-weight:bold; }
     </style>
   </head>
   <body>
     <nav class="navbar navbar-light bg-white shadow-sm">
       <div class="container d-flex justify-content-between align-items-center">
         
-        <!-- Agrupando logo + nome -->
+        <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="#" style="color: #d60464; font-weight: bold;">
           <img src="assets/ALe-logo.png" alt="ALe" style="width:50px;" class="me-2">
           Ale Skincare
@@ -124,25 +131,34 @@ $userName = $_SESSION['user_name'] ?? 'Usuário';
       </div>
 
       <!-- Form novo fornecedor -->
-      <div id="supplierForm" class="card mb-4 p-3" style="display:none;">
-        <h5>Cadastrar Novo Fornecedor</h5>
+      <div id="supplierForm" class="card mb-4 p-3" style="display:none; outline: 1px solid #FDBBD5;">
+        <p style="color: #d60464;">Cadastrar Fornecedor</p>
         <form id="frmNewSupplier">
           <div class="row">
-            <div class="col-md-6 mb-2"><input class="form-control" name="name" placeholder="Nome da Empresa" required></div>
-            <div class="col-md-6 mb-2"><input class="form-control" name="contact" placeholder="E-mail / Telefone"></div>
-            <div class="col-12 mb-2"><input class="form-control" name="address" placeholder="Endereço"></div>
+            <div class="col-md-8 mb-2">
+              <label class="text-small-bold">Nome da empresa</label>
+              <input class="form-control" name="name" required>
+            </div>
+            <div class="col-md-4 mb-2">
+              <label class="text-small-bold">Contato</label>
+              <input class="form-control" name="contact" required >
+            </div>
+            <div class="col-12 mb-2">
+              <label class="text-small-bold">Endereço</label>
+              <input class="form-control" name="address"></input>
+            </div>
           </div>
-          <div>
-            <button class="btn btn-pink">Cadastrar Fornecedor</button>
-            <button id="btnCancelSupplier" class="btn btn-outline-secondary" type="button">Cancelar</button>
+          <div class="mt-2">
+            <button class="btn btn-pink" type="submit">Cadastrar Fornecedor</button>
+            <button id="btnCancelSupplier" type="button" class="btn btn-outline-pink text-pink">Cancelar</button>
           </div>
         </form>
       </div>
 
       <!-- Lista de fornecedores -->
-      <div id="suppliersList" class="card card-custom p-3">
-        <p style="color: #d60464;">Lista de Fornecedores</p>
-        <div id="suppliersList" class="card p-3">
+      <div id="suppliersList" class="card card-custom p-3" style="outline: 1px solid #FDBBD5; background-color: #FDF5F7;">
+        <p style="color: #d60464; ">Lista de Fornecedores</p>
+        <div id="suppliersList" class="card p-3" style="outline: 1px solid #FDBBD5;">
           <div id="suppliersTable">
             <!-- tabela via JS -->
           </div>

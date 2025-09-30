@@ -1,27 +1,32 @@
 <?php
-// php/cadastro.php
 session_start();
 $pdo = require __DIR__ . '/conexao.php';
 
-// Recebe dados do formulário (index.php)
 $name = trim($_POST['nome'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 $password_confirm = $_POST['password_confirm'] ?? '';
 
-// Validações simples
+// campos não preenchidos
 if (!$name || !$email || !$password) {
-    die('Preencha todos os campos.');
+    header('Location: ../index.php?erro=preencha');
+    exit;
 }
+
+// as senhas não conferem
 if ($password !== $password_confirm) {
-    die('As senhas não conferem.');
+    header('Location: ../index.php?erro=confirm');
+    exit;
 }
 
 // Verifica se já existe
 $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
 $stmt->execute([$email]);
+
+// email já cadastrado
 if ($stmt->fetch()) {
-    die('E-mail já cadastrado.');
+    header('Location: ../index.php?erro=emailExists');
+    exit;
 }
 
 $salt = bin2hex(random_bytes(16));

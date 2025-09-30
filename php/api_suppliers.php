@@ -1,5 +1,4 @@
 <?php
-// php/api_suppliers.php
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 $pdo = require __DIR__ . '/conexao.php';
